@@ -26,6 +26,7 @@ const LoginPage = () => {
       .then(data => {
         if (data.success) {
           alert('Login successful!');
+          localStorage.setItem('token', data.data.token);
           navigate('/home');
         } else {
           alert(data.message);
