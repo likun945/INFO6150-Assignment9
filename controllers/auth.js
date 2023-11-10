@@ -5,22 +5,23 @@ const config = require('../config/index');
 const secretKey = config.secretKey;
 
 exports.logIn = async (req, res) => {
+    console.log(req.body)
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({ message: 'Authentication failed' });
+            return res.error(401, 'Authentication failed');
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            return res.status(401).json({ message: 'Invalid password' });
+            return res.error(401, 'Invalid password');
         }
 
         const token = jwt.sign({ email }, secretKey, { expiresIn: 86400 });
-        res.json({ token });
+        res.success({ token }, 'Authentication successful');   
     } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error' });
+        res.error(500, error.message);
     }
 }
 
